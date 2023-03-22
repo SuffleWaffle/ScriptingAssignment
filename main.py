@@ -31,8 +31,6 @@ def validate_input_dims(input_fname: str):
 
     input_arr_data = np.array([line.split() for line in input_arr_data])
 
-    ic(input_arr_dims)
-    ic(input_arr_data.shape)
 
     if input_arr_dims != input_arr_data.shape:
         raise ValueError("STATED input array dimensions do not match the ACTUAL input array dimensions.")
@@ -52,12 +50,11 @@ def create_blank_image(width: int, height: int):
                         color=rgb_color)
         img.save(fp=blank_image_fname,
                  format="JPEG")
-        ic(blank_image_fname)
-
-        return blank_image_fname
 
     else:
         logging.info(f"File {blank_image_fname} already exists, skipping creation...")
+
+    return blank_image_fname
 
 
 # ___________________________________________________________________________________________
@@ -146,13 +143,14 @@ def contour_detect(input_fname: str):
                comments="",
                encoding=None)
 
+
 # >>>> ************************************************************************************************
 
 
 if __name__ == "__main__":
     # ___________________________________________________________________________________________
     # --- RUN CONTOUR DETECTION SCRIPT ---
-    bin_input_fname = "input_v2.txt"
+    bin_input_fname = "input_v1.txt"
 
     if os.path.exists(bin_input_fname):
         contour_detect(input_fname=bin_input_fname)
