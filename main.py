@@ -31,7 +31,6 @@ def validate_input_dims(input_fname: str):
 
     input_arr_data = np.array([line.split() for line in input_arr_data])
 
-
     if input_arr_dims != input_arr_data.shape:
         raise ValueError("STATED input array dimensions do not match the ACTUAL input array dimensions.")
 
