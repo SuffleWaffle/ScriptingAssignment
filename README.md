@@ -36,12 +36,17 @@ Script outputs a filled version of the image data:
 Where the last number is the amount of positions filled in.
 
 # RESULTS
-# 1. Original input-otput:
+# 1. Original input:
 ![img.png](results/results_1_1.png)
 
 ![img.png](results/results_1_2.png)
 
-# 2. Modified input-output:
+# 2. Modified input 1:
 ![img.png](results/results_2_1.png)
 
 ![img.png](results/results_2_2.png)
+
+# 3. Modified input 2:
+![img.png](results/results_3_1.png)
+
+![img.png](results/results_3_2.png)
