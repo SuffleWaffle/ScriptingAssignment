@@ -22,22 +22,36 @@ from icecream import ic
 # >>>> </> SCRIPT METHODS </>
 # >>>> ************************************************************************************************
 
-# >>
-def create_blank_image(fname: str, width: int, height: int, rgb_color: tuple):
-    img = Image.new(mode="RGB",
-                    size=(width, height),
-                    color=rgb_color)
-    img.save(fp=fname,
-             format="JPEG")
+# ___________________________________________________________________________________________
+# --- CREATE BLANK IMAGE FOR PLOTS ---
+def create_blank_image(width: int, height: int) -> str:
+    rgb_color = (255, 255, 255)
+    blank_image_fname = f"blank_image_{width}x{height}.jpg"
+
+    if not os.path.exists(blank_image_fname):
+        img = Image.new(mode="RGB",
+                        size=(width, height),
+                        color=rgb_color)
+        img.save(fp=blank_image_fname,
+                 format="JPEG")
+
+        return blank_image_fname
+
+    else:
+        logging.info(f"File {blank_image_fname} already exists, skipping creation...")
 
 
-# >>
-def validate_input_dims(input_fname: str):
+# ___________________________________________________________________________________________
+# --- VALIDATE INPUT FILE DIMENSIONS ---
+def validate_input_dims(input_fname: str) -> tuple:
     with open(input_fname, "r") as f:
         input_arr_dims = tuple([int(string) for string in f.readline().split()])
         input_arr_data = f.read().splitlines()[0:]
 
     input_arr_data = np.array([line.split() for line in input_arr_data])
+
+    ic(input_arr_dims)
+    ic(input_arr_data.shape)
 
     if input_arr_dims != input_arr_data.shape:
         raise ValueError("STATED input array dimensions do not match the ACTUAL input array dimensions.")
@@ -45,7 +59,8 @@ def validate_input_dims(input_fname: str):
     return input_arr_dims
 
 
-# >>
+# ___________________________________________________________________________________________
+# --- APPLY PLOT STYLE ---
 def apply_plot_style(grid_color: str, x_len: int, y_len: int):
     plt_obj = plt.gca()
     plt_obj.grid(color=grid_color, linestyle="-", linewidth=1.5, which="major"),
@@ -57,14 +72,17 @@ def apply_plot_style(grid_color: str, x_len: int, y_len: int):
 
 
 # >> MAIN METHOD
-def contour_detect(input_fname: str, blank_fname: str):
-    # ___________________________________________________________________________________________
-    # --- READ THE BLANK IMAGE FOR PLOTS ---
-    blank_image = cv2.imread(blank_fname)
-
+def contour_detect(input_fname: str):
     # ___________________________________________________________________________________________
     # --- VALIDATE INPUT FILE DIMENSIONS ---
     input_arr_dims = validate_input_dims(input_fname=input_fname)
+
+    # ___________________________________________________________________________________________
+    # --- CREATE AND READ THE BLANK IMAGE FOR PLOTS ---
+    blank_image_fname = create_blank_image(width=input_arr_dims[1],
+                                           height=input_arr_dims[0])
+
+    blank_image = cv2.imread(blank_image_fname)
 
     # ___________________________________________________________________________________________
     # --- 1.0 - READ THE INPUT FROM txt FILE
@@ -129,26 +147,12 @@ def contour_detect(input_fname: str, blank_fname: str):
 # >>>> ************************************************************************************************
 
 
-# >>>> RUN SCRIPT
-# >>>> ************************************************************************************************
 if __name__ == "__main__":
     # ___________________________________________________________________________________________
-    # --- CREATE BLANK IMAGE FOR PLOTS ---
-    img_width, img_height = 14, 10
-    img_color = (255, 255, 255)
-
-    blank_image_fname = f"blank_image_{img_width}x{img_height}.jpg"
-
-    if not os.path.exists(blank_image_fname):
-        create_blank_image(blank_image_fname, img_width, img_height, img_color)
-    else:
-        logging.info(f"File {blank_image_fname} already exists, skipping creation...")
-
-    # ___________________________________________________________________________________________
     # --- RUN CONTOUR DETECTION SCRIPT ---
-    ascii_input_fname = "input_v2.txt"
+    bin_input_fname = "input_v2.txt"
 
-    if os.path.exists(ascii_input_fname):
-        contour_detect(input_fname=ascii_input_fname, blank_fname=blank_image_fname)
+    if os.path.exists(bin_input_fname):
+        contour_detect(input_fname=bin_input_fname)
     else:
-        raise FileNotFoundError(f"File {ascii_input_fname} not found!")
+        raise FileNotFoundError(f"File {bin_input_fname} not found!")
