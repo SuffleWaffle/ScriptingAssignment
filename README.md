@@ -37,11 +37,11 @@ Where the last number is the amount of positions filled in.
 
 # RESULTS
 # 1. Original input-otput:
-![img.png](results_src/results_1_1.png)
+![img.png](results/results_1_1.png)
 
-![img.png](results_src/results_1_2.png)
+![img.png](results/results_1_2.png)
 
 # 2. Modified input-output:
-![img.png](results_src/results_2_1.png)
+![img.png](results/results_2_1.png)
 
-![img.png](results_src/results_2_2.png)
+![img.png](results/results_2_2.png)

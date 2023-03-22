@@ -18,18 +18,18 @@ from PIL import Image
 from icecream import ic
 # >>>> ************************************************************************************************
 
+
 # >>>> </> SCRIPT METHODS </>
 # >>>> ************************************************************************************************
-
 
 # ___________________________________________________________________________________________
 # --- VALIDATE INPUT FILE DIMENSIONS ---
 class SubScripts:
     @staticmethod
-    def validate_input_dims(input_fname: str):
-        with open(input_fname, "r") as f:
-            input_arr_dims = tuple([int(string) for string in f.readline().split()])
-            input_arr_data = f.read().splitlines()[0:]
+    def validate_input_dims(input_file: str):
+        with open(input_file, "r") as file:
+            input_arr_dims = tuple([int(string) for string in file.readline().split()])
+            input_arr_data = file.read().splitlines()[0:]
 
         input_arr_data = np.array([line.split() for line in input_arr_data])
 
@@ -72,10 +72,11 @@ class SubScripts:
 
 # ___________________________________________________________________________________________
 # --- MAIN SCRIPT ---
-def contour_detect(input_fname: str):
+def contour_detect(input_file: str):
+    x = output_source_path
     # ___________________________________________________________________________________________
     # --- VALIDATE INPUT FILE DIMENSIONS ---
-    input_arr_dims = SubScripts.validate_input_dims(input_fname=input_fname)
+    input_arr_dims = SubScripts.validate_input_dims(input_file=input_file)
 
     # ___________________________________________________________________________________________
     # --- CREATE AND READ THE BLANK IMAGE FOR PLOTS ---
@@ -86,7 +87,7 @@ def contour_detect(input_fname: str):
 
     # ___________________________________________________________________________________________
     # --- 1.0 - READ THE INPUT FROM txt FILE
-    bin_input_arr: np.ndarray = np.loadtxt(fname=input_fname,
+    bin_input_arr: np.ndarray = np.loadtxt(fname=input_file,
                                            dtype=np.uint8,
                                            skiprows=1)
     # >>>> PLOT - 1
@@ -136,7 +137,9 @@ def contour_detect(input_fname: str):
 
     # ___________________________________________________________________________________________
     # --- SAVE THE OUTPUT TO txt FILE ---
-    output_fname = input_fname.replace("input", "output")
+    output_fname = input_file.replace("input", "output")
+    # output_path = f"{output_source_path}{output_fname}"
+
     np.savetxt(fname=output_fname, X=bin_output_arr,
                fmt="%d", delimiter=" ", newline="\n",
                header=" ".join([str(integer) for integer in input_arr_dims]),
@@ -150,10 +153,16 @@ def contour_detect(input_fname: str):
 
 if __name__ == "__main__":
     # ___________________________________________________________________________________________
-    # --- RUN CONTOUR DETECTION SCRIPT ---
-    bin_input_fname = "input_v1.txt"
+    # --- PATHS & FILES ---
+    input_source_path = "./src_input/"
+    output_source_path = "./src_output/"
 
-    if os.path.exists(bin_input_fname):
-        contour_detect(input_fname=bin_input_fname)
+    input_fname = "input_v3.txt"
+    input_path = f"{input_source_path}{input_fname}"
+
+    # ___________________________________________________________________________________________
+    # --- RUN CONTOUR DETECTION SCRIPT ---
+    if os.path.exists(input_path):
+        contour_detect(input_file=input_path)
     else:
-        raise FileNotFoundError(f"File {bin_input_fname} not found!")
+        raise FileNotFoundError(f"File {input_path} not found!")
