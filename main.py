@@ -23,48 +23,50 @@ from icecream import ic
 
 # ___________________________________________________________________________________________
 # --- VALIDATE INPUT FILE DIMENSIONS ---
-def validate_input_dims(input_fname: str):
-    with open(input_fname, "r") as f:
-        input_arr_dims = tuple([int(string) for string in f.readline().split()])
-        input_arr_data = f.read().splitlines()[0:]
+class SubScripts:
+    @staticmethod
+    def validate_input_dims(input_fname: str):
+        with open(input_fname, "r") as f:
+            input_arr_dims = tuple([int(string) for string in f.readline().split()])
+            input_arr_data = f.read().splitlines()[0:]
 
-    input_arr_data = np.array([line.split() for line in input_arr_data])
+        input_arr_data = np.array([line.split() for line in input_arr_data])
 
-    if input_arr_dims != input_arr_data.shape:
-        raise ValueError("STATED input array dimensions do not match the ACTUAL input array dimensions.")
+        if input_arr_dims != input_arr_data.shape:
+            raise ValueError("STATED input array dimensions do not match the ACTUAL input array dimensions.")
 
-    return input_arr_dims
+        return input_arr_dims
 
+    # ___________________________________________________________________________________________
+    # --- CREATE BLANK IMAGE FOR PLOTS ---
+    @staticmethod
+    def create_blank_image(width: int, height: int):
+        rgb_color = (255, 255, 255)
+        blank_image_fname = f"blank_image_{width}x{height}.jpg"
 
-# ___________________________________________________________________________________________
-# --- CREATE BLANK IMAGE FOR PLOTS ---
-def create_blank_image(width: int, height: int):
-    rgb_color = (255, 255, 255)
-    blank_image_fname = f"blank_image_{width}x{height}.jpg"
+        if not os.path.exists(blank_image_fname):
+            img = Image.new(mode="RGB",
+                            size=(width, height),
+                            color=rgb_color)
+            img.save(fp=blank_image_fname,
+                     format="JPEG")
 
-    if not os.path.exists(blank_image_fname):
-        img = Image.new(mode="RGB",
-                        size=(width, height),
-                        color=rgb_color)
-        img.save(fp=blank_image_fname,
-                 format="JPEG")
+        else:
+            logging.info(f"File {blank_image_fname} already exists, skipping creation...")
 
-    else:
-        logging.info(f"File {blank_image_fname} already exists, skipping creation...")
+        return blank_image_fname
 
-    return blank_image_fname
-
-
-# ___________________________________________________________________________________________
-# --- APPLY PLOT STYLE ---
-def apply_plot_style(grid_color: str, x_len: int, y_len: int):
-    plt_obj = plt.gca()
-    plt_obj.grid(color=grid_color, linestyle="-", linewidth=1.5, which="major"),
-    plt_obj.minorticks_on()
-    plt_obj.set_xticks(np.arange(-.5, x_len, 1))
-    plt_obj.set_yticks(np.arange(-.5, y_len, 1))
-    plt_obj.set_xticklabels(np.arange(0, x_len+1, 1))
-    plt_obj.set_yticklabels(np.arange(0, y_len+1, 1))
+    # ___________________________________________________________________________________________
+    # --- APPLY PLOT STYLE ---
+    @staticmethod
+    def apply_plot_style(grid_color: str, x_len: int, y_len: int):
+        plt_obj = plt.gca()
+        plt_obj.grid(color=grid_color, linestyle="-", linewidth=1.5, which="major"),
+        plt_obj.minorticks_on()
+        plt_obj.set_xticks(np.arange(-.5, x_len, 1))
+        plt_obj.set_yticks(np.arange(-.5, y_len, 1))
+        plt_obj.set_xticklabels(np.arange(0, x_len+1, 1))
+        plt_obj.set_yticklabels(np.arange(0, y_len+1, 1))
 
 
 # ___________________________________________________________________________________________
@@ -72,12 +74,12 @@ def apply_plot_style(grid_color: str, x_len: int, y_len: int):
 def contour_detect(input_fname: str):
     # ___________________________________________________________________________________________
     # --- VALIDATE INPUT FILE DIMENSIONS ---
-    input_arr_dims = validate_input_dims(input_fname=input_fname)
+    input_arr_dims = SubScripts.validate_input_dims(input_fname=input_fname)
 
     # ___________________________________________________________________________________________
     # --- CREATE AND READ THE BLANK IMAGE FOR PLOTS ---
-    blank_image_fname = create_blank_image(width=input_arr_dims[1],
-                                           height=input_arr_dims[0])
+    blank_image_fname = SubScripts.create_blank_image(width=input_arr_dims[1],
+                                                      height=input_arr_dims[0])
 
     blank_image = cv2.imread(blank_image_fname)
 
@@ -88,7 +90,7 @@ def contour_detect(input_fname: str):
                                            skiprows=1)
     # >>>> PLOT - 1
     plt.subplot(221), plt.imshow(bin_input_arr, cmap="gray_r"), plt.title("1 - BINARY INPUT")
-    apply_plot_style("red", input_arr_dims[1], input_arr_dims[0])
+    SubScripts.apply_plot_style("red", input_arr_dims[1], input_arr_dims[0])
 
     # ___________________________________________________________________________________________
     # --- 1.1 - FIND CONTOURS IN bin_input_arr (Suzuki Tracing from OpenCV)
@@ -101,7 +103,7 @@ def contour_detect(input_fname: str):
                                     color=(255, 0, 0), thickness=0)
     # >>>> PLOT - 2
     plt.subplot(222), plt.imshow(contours_img), plt.title("2 - CONTOURS")
-    apply_plot_style("black", input_arr_dims[1], input_arr_dims[0])
+    SubScripts.apply_plot_style("black", input_arr_dims[1], input_arr_dims[0])
 
     # ___________________________________________________________________________________________
     # --- 3.0 - FILL CONTOURS ---
@@ -119,7 +121,7 @@ def contour_detect(input_fname: str):
 
     # >>>> PLOT - 3
     plt.subplot(223), plt.imshow(bin_output_arr, cmap="gray_r"), plt.title("3 - BINARY OUTPUT")
-    apply_plot_style("red", input_arr_dims[1], input_arr_dims[0])
+    SubScripts.apply_plot_style("red", input_arr_dims[1], input_arr_dims[0])
 
     # ___________________________________________________________________________________________
     # --- PLOT THE IMAGES ---
