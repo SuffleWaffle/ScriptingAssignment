@@ -18,32 +18,13 @@ from PIL import Image
 from icecream import ic
 # >>>> ************************************************************************************************
 
-
 # >>>> </> SCRIPT METHODS </>
 # >>>> ************************************************************************************************
-
-# ___________________________________________________________________________________________
-# --- CREATE BLANK IMAGE FOR PLOTS ---
-def create_blank_image(width: int, height: int) -> str:
-    rgb_color = (255, 255, 255)
-    blank_image_fname = f"blank_image_{width}x{height}.jpg"
-
-    if not os.path.exists(blank_image_fname):
-        img = Image.new(mode="RGB",
-                        size=(width, height),
-                        color=rgb_color)
-        img.save(fp=blank_image_fname,
-                 format="JPEG")
-
-        return blank_image_fname
-
-    else:
-        logging.info(f"File {blank_image_fname} already exists, skipping creation...")
 
 
 # ___________________________________________________________________________________________
 # --- VALIDATE INPUT FILE DIMENSIONS ---
-def validate_input_dims(input_fname: str) -> tuple:
+def validate_input_dims(input_fname: str):
     with open(input_fname, "r") as f:
         input_arr_dims = tuple([int(string) for string in f.readline().split()])
         input_arr_data = f.read().splitlines()[0:]
@@ -60,6 +41,26 @@ def validate_input_dims(input_fname: str) -> tuple:
 
 
 # ___________________________________________________________________________________________
+# --- CREATE BLANK IMAGE FOR PLOTS ---
+def create_blank_image(width: int, height: int):
+    rgb_color = (255, 255, 255)
+    blank_image_fname = f"blank_image_{width}x{height}.jpg"
+
+    if not os.path.exists(blank_image_fname):
+        img = Image.new(mode="RGB",
+                        size=(width, height),
+                        color=rgb_color)
+        img.save(fp=blank_image_fname,
+                 format="JPEG")
+        ic(blank_image_fname)
+
+        return blank_image_fname
+
+    else:
+        logging.info(f"File {blank_image_fname} already exists, skipping creation...")
+
+
+# ___________________________________________________________________________________________
 # --- APPLY PLOT STYLE ---
 def apply_plot_style(grid_color: str, x_len: int, y_len: int):
     plt_obj = plt.gca()
@@ -71,7 +72,8 @@ def apply_plot_style(grid_color: str, x_len: int, y_len: int):
     plt_obj.set_yticklabels(np.arange(0, y_len+1, 1))
 
 
-# >> MAIN METHOD
+# ___________________________________________________________________________________________
+# --- MAIN SCRIPT ---
 def contour_detect(input_fname: str):
     # ___________________________________________________________________________________________
     # --- VALIDATE INPUT FILE DIMENSIONS ---
@@ -89,7 +91,7 @@ def contour_detect(input_fname: str):
     bin_input_arr: np.ndarray = np.loadtxt(fname=input_fname,
                                            dtype=np.uint8,
                                            skiprows=1)
-    # >>>> plot - 1
+    # >>>> PLOT - 1
     plt.subplot(221), plt.imshow(bin_input_arr, cmap="gray_r"), plt.title("1 - BINARY INPUT")
     apply_plot_style("red", input_arr_dims[1], input_arr_dims[0])
 
@@ -102,7 +104,7 @@ def contour_detect(input_fname: str):
     # --- 2.0 - CONTOURS IMAGE
     contours_img = cv2.drawContours(image=blank_image, contours=contours, contourIdx=0,
                                     color=(255, 0, 0), thickness=0)
-    # >>>> plot - 2
+    # >>>> PLOT - 2
     plt.subplot(222), plt.imshow(contours_img), plt.title("2 - CONTOURS")
     apply_plot_style("black", input_arr_dims[1], input_arr_dims[0])
 
@@ -120,7 +122,7 @@ def contour_detect(input_fname: str):
     bin_output_arr = filled_contours_rgb_arr[:, :, 0]
     ic(bin_output_arr)
 
-    # >>>> plot - 3
+    # >>>> PLOT - 3
     plt.subplot(223), plt.imshow(bin_output_arr, cmap="gray_r"), plt.title("3 - BINARY OUTPUT")
     apply_plot_style("red", input_arr_dims[1], input_arr_dims[0])
 
