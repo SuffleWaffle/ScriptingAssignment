@@ -22,9 +22,12 @@ from icecream import ic
 # >>>> </> SCRIPT METHODS </>
 # >>>> ************************************************************************************************
 
+
 # ___________________________________________________________________________________________
-# --- VALIDATE INPUT FILE DIMENSIONS ---
+# --- SUB SCRIPTS ---
 class SubScripts:
+    # ___________________________________________________________________________________________
+    # --- VALIDATE INPUT FILE DIMENSIONS ---
     @staticmethod
     def validate_input_dims(input_file: str):
         with open(input_file, "r") as file:
